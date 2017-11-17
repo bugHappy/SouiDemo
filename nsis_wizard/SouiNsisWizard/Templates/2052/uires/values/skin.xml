@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<skin>
+    <imglist name="skin_traymenu_icons"	src="img:traymenu_icons" states="9"/>
+    <imgframe name="img_bg" src="IMG.MAIN:bg"/>
+    <imglist name="img_welcome_center" src="IMG.MAIN:welcome_center"/>
+    <imglist name="img_install" src="IMG.MAIN:install" states="4"/>
+    <imglist name="img_custom_button" src="IMG.MAIN:custom_button" states="4"/>
+
+    <imgframe name="prog_bar" src="IMG.MAIN:prog_bar" left="10" top="2" right="5" bottom="2"/>
+    <imgframe name="prog_bkgnd" src="IMG.MAIN:prog_bkgnd" left="10" top="2" right="10" bottom="2"/>
+
+    <imglist name="img_setup1" src="IMG.MAIN:setup1"/>
+    <imglist name="img_setup2" src="IMG.MAIN:setup2"/>
+    <imglist name="img_setup3" src="IMG.MAIN:setup3"/>
+    <imglist name="img_setup4" src="IMG.MAIN:setup4"/>
+    <imglist name="img_setup_tab" src="IMG.MAIN:setup_tab" states="4"/>
+
+    <imglist name="img_finish_ads" src="IMG.MAIN:finish_ads" states="4"/>
+    <imglist name="img_finish_feel" src="IMG.MAIN:finish_feel" states="4"/>
+    <imglist name="img_finish_finish" src="IMG.MAIN:finish_finish" states="4"/>
+  </skin>
