@@ -34,7 +34,7 @@ RequestExecutionLevel admin
 ;卸载图标
 !define MUI_UNICON	".\logo.ico"
 ;英文产品名称
-!define PRODUCT_NAME_EN  "[!output ProductName]"
+!define PRODUCT_NAME_EN  "[!output ProductNameEn]"
 ;提示语
 !define ERROR_MESSAGE           "安装包不正确，请重新下载"
 ;预计软件所需空间大小(M)，注册表中为真实大小，仅用于判断空间是否够用。
@@ -169,38 +169,38 @@ SectionEnd
 
 ; 协议链接点击处理函数
 Function OnLinkAgreementClick
-  	[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJONELINKAGREEMENT"
+  	[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJONELINKAGREEMENT"
 FunctionEnd
 
 ;自定义安装
 Function OnCustomInstallClick
- [!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJONECUSTOMINSTALL"
+ [!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJONECUSTOMINSTALL"
 FunctionEnd
 
 ; 快速安装按钮点击处理函数
 Function OnBtnInstallClick
- ;[!output ProductName]::NSISScriptSendMessage $Dialog "WM_SJONEINSTALL"
+ ;[!output PROJECT_NAME]::NSISScriptSendMessage $Dialog "WM_SJONEINSTALL"
  	;停止消息循环
-	[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJMSGLOOPSTOP"
+	[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJMSGLOOPSTOP"
 FunctionEnd
 
 ; 同意协议复选框点击处理函数
 Function OnChkAgreementClick
-		[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJONECHECKSTATUS"
+		[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJONECHECKSTATUS"
 FunctionEnd
 ; 协议页面确定按钮点击处理函数
 Function OnAgreementSureClick
-		[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTWOSURE"
+		[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTWOSURE"
 FunctionEnd
 ;自定义选择页面返回上一步
 Function OnPreviousClick
-		[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTHREEPREVIOUS"
+		[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTHREEPREVIOUS"
 FunctionEnd
 
 ;变更路径
 Function OnChangePathClick
 		;打开文件对话框
-		[!output ProductName]::NSISOpenFolderDialog /NOUNLOAD "请选择安装目录"
+		[!output PROJECT_NAME]::NSISOpenFolderDialog /NOUNLOAD "请选择安装目录"
 		Pop $0
 		
 		${If} $0 == "-1"
@@ -209,11 +209,11 @@ Function OnChangePathClick
       ;可用磁盘空间
 			${GetRoot} $INSTDIR $1
 			${DriveSpace} $1 "/D=F /S=M" $2
-			[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTHREEUPDATEFREESPACE" "$2"
+			[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTHREEUPDATEFREESPACE" "$2"
 			;软件所需空间大小
-			[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTHREEUPDATEREQUIREDSPACE" "${REQUIRED_SPACE}"
+			[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTHREEUPDATEREQUIREDSPACE" "${REQUIRED_SPACE}"
 			;默认安装路径
-			[!output ProductName]::SetControlProperties /NOUNLOAD "SEdit" "edit_choose_url" "text" $INSTDIR
+			[!output PROJECT_NAME]::SetControlProperties /NOUNLOAD "SEdit" "edit_choose_url" "text" $INSTDIR
    ${EndIf}
 FunctionEnd
 
@@ -222,27 +222,27 @@ FunctionEnd
 Function OnInstall
 
 		;停止消息循环
-		[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJMSGLOOPSTOP"
+		[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJMSGLOOPSTOP"
 FunctionEnd
 
 ;点击“立即体验",完成并开始运行程序(消息循环已经停止，不会阻塞，可直接操作界面)
 Function OnFinishRun
 	;打开程序运行
 	Exec '"$INSTDIR\${PRODUCT_MAIN_EXE}"'
-  [!output ProductName]::ClosePage /NOUNLOAD
+  [!output PROJECT_NAME]::ClosePage /NOUNLOAD
 FunctionEnd
 
 Function OnFinishRunEx
-  [!output ProductName]::ClosePage /NOUNLOAD
+  [!output PROJECT_NAME]::ClosePage /NOUNLOAD
 FunctionEnd
 
 ;关闭程序
 Function OnClose
-  [!output ProductName]::NSISMessageBox /NOUNLOAD 3 "确认要取消安装吗？" "提示"
+  [!output PROJECT_NAME]::NSISMessageBox /NOUNLOAD 3 "确认要取消安装吗？" "提示"
   Pop $0
   ${If} $0 == "1"
     ;关闭程序
-	  [!output ProductName]::ClosePage /NOUNLOAD
+	  [!output PROJECT_NAME]::ClosePage /NOUNLOAD
 	${EndIf}
 FunctionEnd
 
@@ -252,132 +252,132 @@ Function MyPage
  	;ShowWindow $HWNDPARENT ${SW_HIDE}
 	${NSW_SetWindowSize} $HWNDPARENT 0 0 ;改变自定义窗体大小
 	;/////初始化窗口/////
-	[!output ProductName]::InitWindow /NOUNLOAD "$PLUGINSDIR"
+	[!output PROJECT_NAME]::InitWindow /NOUNLOAD "$PLUGINSDIR"
 	Pop $Dialog
 	;/////绑定控件与脚本函数对应关系//////
 	
-	[!output ProductName]::FindChildByName /NOUNLOAD "link_agreement"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "link_agreement"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 OnLinkAgreementClick
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD  "link_agreement" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD  "link_agreement" $0
 	${EndIf}
 
-	[!output ProductName]::FindChildByName /NOUNLOAD  "btn_custominstall"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD  "btn_custominstall"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 OnCustomInstallClick
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD  "btn_custominstall" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD  "btn_custominstall" $0
 	${EndIf}
 
-	[!output ProductName]::FindChildByName /NOUNLOAD "btn_install"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_install"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 OnBtnInstallClick
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_install" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_install" $0
 	${EndIf}
 
 
-	[!output ProductName]::FindChildByName /NOUNLOAD "chk_agreement"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "chk_agreement"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 OnChkAgreementClick
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "chk_agreement" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "chk_agreement" $0
 	${EndIf}
 	
-	[!output ProductName]::FindChildByName /NOUNLOAD "btn_agreement_sure"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_agreement_sure"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 OnAgreementSureClick
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_agreement_sure" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_agreement_sure" $0
 	${EndIf}
 	
-	[!output ProductName]::FindChildByName /NOUNLOAD "btn_choose_previous"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_choose_previous"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 OnPreviousClick
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_choose_previous" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_choose_previous" $0
 	${EndIf}
 
-  [!output ProductName]::FindChildByName /NOUNLOAD "btn_choose_changedir"
+  [!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_choose_changedir"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 OnChangePathClick
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_choose_changedir" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_choose_changedir" $0
 	${EndIf}
 
- [!output ProductName]::FindChildByName /NOUNLOAD "btn_choose_install"
+ [!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_choose_install"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 OnInstall
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_choose_install" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_choose_install" $0
 	${EndIf}
 	
-	[!output ProductName]::FindChildByName /NOUNLOAD "btn_finish_feel"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_finish_feel"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 OnFinishRun
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_finish_feel" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_finish_feel" $0
 	${EndIf}
 	
-		[!output ProductName]::FindChildByName /NOUNLOAD "btn_finish_finish"
+		[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_finish_finish"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 OnFinishRunEx
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_finish_finish" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_finish_finish" $0
 	${EndIf}
 	
 	
-	[!output ProductName]::FindChildByName /NOUNLOAD "btn_close"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_close"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 OnClose
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_close" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_close" $0
 	${EndIf}
 
 	;初始化按钮状态
-	[!output ProductName]::SetControlProperties /NOUNLOAD "STabCtrl" "tab_main" "curSel" "0"
-	[!output ProductName]::SetControlProperties /NOUNLOAD  "SImageButton" "btn_install" "enable" "false"
-	[!output ProductName]::SetControlProperties /NOUNLOAD  "SImageButton" "btn_custominstall" "enable" "false"
-	[!output ProductName]::SetControlProperties /NOUNLOAD  "SCheckBox" "chk_agreement" "checked" "false"
+	[!output PROJECT_NAME]::SetControlProperties /NOUNLOAD "STabCtrl" "tab_main" "curSel" "0"
+	[!output PROJECT_NAME]::SetControlProperties /NOUNLOAD  "SImageButton" "btn_install" "enable" "false"
+	[!output PROJECT_NAME]::SetControlProperties /NOUNLOAD  "SImageButton" "btn_custominstall" "enable" "false"
+	[!output PROJECT_NAME]::SetControlProperties /NOUNLOAD  "SCheckBox" "chk_agreement" "checked" "false"
 	
 	;/////初始化数据/////
 
 	;可用磁盘空间
 	${GetRoot} $INSTDIR $0
 	${DriveSpace} $0 "/D=F /S=M" $2
-	[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTHREEUPDATEFREESPACE" "$2"
+	[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTHREEUPDATEFREESPACE" "$2"
 	
 	;软件所需空间大小
-	[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTHREEUPDATEREQUIREDSPACE" "${REQUIRED_SPACE}"
+	[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTHREEUPDATEREQUIREDSPACE" "${REQUIRED_SPACE}"
 	
 	;默认安装路径
-	[!output ProductName]::SetControlProperties /NOUNLOAD "SEdit" "edit_choose_url" "text" $INSTDIR
+	[!output PROJECT_NAME]::SetControlProperties /NOUNLOAD "SEdit" "edit_choose_url" "text" $INSTDIR
 	
 	;/////显示窗口/////
-	[!output ProductName]::ShowPage /NOUNLOAD
+	[!output PROJECT_NAME]::ShowPage /NOUNLOAD
 FunctionEnd
 
 Function MyInstallNow
@@ -388,13 +388,13 @@ Function MyInstallNow
 	${NSW_SetWindowSize} $HWNDPARENT 0 0 ;改变自定义窗体大小
 
 	;切换视图
-	;[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTABSETSEL" "3"
-	[!output ProductName]::SetControlProperties /NOUNLOAD "STabCtrl" "tab_main" "curSel" "3"
+	;[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTABSETSEL" "3"
+	[!output PROJECT_NAME]::SetControlProperties /NOUNLOAD "STabCtrl" "tab_main" "curSel" "3"
 
    ;绑定进度
-  [!output ProductName]::BindingProgress  /NOUNLOAD "pg_installing"
+  [!output PROJECT_NAME]::BindingProgress  /NOUNLOAD "pg_installing"
   	
-	;[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJMSGLOOPSTOP"
+	;[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJMSGLOOPSTOP"
 FunctionEnd
 
 Function CreateMutex
@@ -471,34 +471,34 @@ FunctionEnd
 
 ;############################################卸载############################################
 Function un.OnClose
-  [!output ProductName]::NSISMessageBox /NOUNLOAD 3 "确认要取消卸载吗？" "提示"
+  [!output PROJECT_NAME]::NSISMessageBox /NOUNLOAD 3 "确认要取消卸载吗？" "提示"
   Pop $0
   ${If} $0 == "1"
     ;关闭程序
-	  [!output ProductName]::ClosePage /NOUNLOAD
+	  [!output PROJECT_NAME]::ClosePage /NOUNLOAD
 	${EndIf}
 FunctionEnd
 ;卸载第一页进入下一页
 Function un.OnBtnNextClick
-	[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJUNSTALLSTARTNEXT"
+	[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJUNSTALLSTARTNEXT"
 FunctionEnd
 
 Function un.OnBtnCancellClick
-	[!output ProductName]::NSISMessageBox /NOUNLOAD 3 "确认要取消卸载吗？" "提示"
+	[!output PROJECT_NAME]::NSISMessageBox /NOUNLOAD 3 "确认要取消卸载吗？" "提示"
   Pop $0
   ${If} $0 == "1"
     ;关闭程序
-	  [!output ProductName]::ClosePage /NOUNLOAD
+	  [!output PROJECT_NAME]::ClosePage /NOUNLOAD
 	${EndIf}
 FunctionEnd
 
 Function un.OnUnstallClick
 		;停止消息循环
-		[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJMSGLOOPSTOP"
+		[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJMSGLOOPSTOP"
 FunctionEnd
 
 Function un.OnFinishClick
-  [!output ProductName]::ClosePage /NOUNLOAD
+  [!output PROJECT_NAME]::ClosePage /NOUNLOAD
 FunctionEnd
 
 Function un.MyUninstallPage
@@ -507,72 +507,72 @@ Function un.MyUninstallPage
 	${NSW_SetWindowSize} $HWNDPARENT 0 0 ;改变自定义窗体大小
 
 	;/////初始化窗口/////
-	[!output ProductName]::InitWindow /NOUNLOAD "$PLUGINSDIR"
+	[!output PROJECT_NAME]::InitWindow /NOUNLOAD "$PLUGINSDIR"
 	Pop $Dialog
 
 	;切换到卸载界面
-	[!output ProductName]::SetControlProperties /NOUNLOAD "STabCtrl" "tab_main" "curSel" "5"
+	[!output PROJECT_NAME]::SetControlProperties /NOUNLOAD "STabCtrl" "tab_main" "curSel" "5"
 	;隐藏最小化按钮
-	[!output ProductName]::SetControlProperties /NOUNLOAD "SImageButton" "btn_min" "visible" "false"
+	[!output PROJECT_NAME]::SetControlProperties /NOUNLOAD "SImageButton" "btn_min" "visible" "false"
 	;显示卸载标题
-	[!output ProductName]::SetControlProperties /NOUNLOAD "SStatic" "txt_titlename" "text" "Sha Monk MM UnInstall Guide"
+	[!output PROJECT_NAME]::SetControlProperties /NOUNLOAD "SStatic" "txt_titlename" "text" "Sha Monk MM UnInstall Guide"
 
 	;绑定关闭按钮
-	[!output ProductName]::FindChildByName /NOUNLOAD "btn_close"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_close"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 un.OnClose
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_close" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_close" $0
 	${EndIf}
 	;/////第一页面/////
 	;绑定下一页
-	[!output ProductName]::FindChildByName /NOUNLOAD "btn_unstallstart_next"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_unstallstart_next"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 un.OnBtnNextClick
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_unstallstart_next" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_unstallstart_next" $0
 	${EndIf}
 	;/////第二页面/////
 	;取消按钮
-	[!output ProductName]::FindChildByName /NOUNLOAD "btn_unstallchoose_previous"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_unstallchoose_previous"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 un.OnBtnCancellClick
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_unstallchoose_previous" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_unstallchoose_previous" $0
 	${EndIf}
 	;卸载按钮
-		[!output ProductName]::FindChildByName /NOUNLOAD "btn_unstallchoose_unnstall"
+		[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_unstallchoose_unnstall"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 un.OnUnstallClick
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_unstallchoose_unnstall" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_unstallchoose_unnstall" $0
 	${EndIf}
 	;////最后一个页面/////
 	;完成按钮
-	[!output ProductName]::FindChildByName /NOUNLOAD "btn_unstallfinish"
+	[!output PROJECT_NAME]::FindChildByName /NOUNLOAD "btn_unstallfinish"
 	Pop $0
 	${If} $0 == "-1"
 		MessageBox MB_OK ERROR_MESSAGE
 	${Else}
 		GetFunctionAddress $0 un.OnFinishClick
-		[!output ProductName]::BindControlAndNSISScript /NOUNLOAD "btn_unstallfinish" $0
+		[!output PROJECT_NAME]::BindControlAndNSISScript /NOUNLOAD "btn_unstallfinish" $0
 	${EndIf}
 	
 	;获取要卸载的目录
 	ReadRegStr $0 HKLM "${Unstall_KeyPath}${PRODUCT_NAME_EN}" "InstallLocation"
   ;显示卸载的目录
-	[!output ProductName]::SetControlProperties /NOUNLOAD "SEdit" "edit_unstallchoose_url" "text" "$0"
+	[!output PROJECT_NAME]::SetControlProperties /NOUNLOAD "SEdit" "edit_unstallchoose_url" "text" "$0"
 
 	;/////显示窗口/////
-	[!output ProductName]::ShowPage /NOUNLOAD
+	[!output PROJECT_NAME]::ShowPage /NOUNLOAD
 FunctionEnd
 
 Function un.MyUninstallNow
@@ -580,9 +580,9 @@ Function un.MyUninstallNow
  	ShowWindow $HWNDPARENT ${SW_HIDE}
 	${NSW_SetWindowSize} $HWNDPARENT 0 0 ;改变自定义窗体大小
 
-	;[!output ProductName]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTABSETSEL" "7"
-  [!output ProductName]::SetControlProperties /NOUNLOAD "STabCtrl" "tab_main" "curSel" "7"
-  [!output ProductName]::BindingProgress  /NOUNLOAD "pg_unstalling"
+	;[!output PROJECT_NAME]::NSISScriptSendMessage /NOUNLOAD $Dialog "WM_SJTABSETSEL" "7"
+  [!output PROJECT_NAME]::SetControlProperties /NOUNLOAD "STabCtrl" "tab_main" "curSel" "7"
+  [!output PROJECT_NAME]::BindingProgress  /NOUNLOAD "pg_unstalling"
   
 FunctionEnd
 
